@@ -1,0 +1,110 @@
+export const API_BASE_URL = 'http://localhost:5000/api';
+
+export async function apiRequest(path, options = {}) {
+  const token = localStorage.getItem('swToken');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers,
+  });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Request failed');
+  }
+
+  return data;
+}
+
+export async function registerUser(payload) {
+  return apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function loginUser(payload) {
+  return apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+// Vehicle APIs
+export async function getVehicles(search = '') {
+  return apiRequest(`/vehicles?search=${encodeURIComponent(search)}`);
+}
+
+export async function createVehicle(data) {
+  return apiRequest('/vehicles', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateVehicle(id, data) {
+  return apiRequest(`/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteVehicle(id) {
+  return apiRequest(`/vehicles/${id}`, { method: 'DELETE' });
+}
+
+// Customer APIs
+export async function getCustomers(search = '') {
+  return apiRequest(`/customers?search=${encodeURIComponent(search)}`);
+}
+
+export async function createCustomer(data) {
+  return apiRequest('/customers', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateCustomer(id, data) {
+  return apiRequest(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteCustomer(id) {
+  return apiRequest(`/customers/${id}`, { method: 'DELETE' });
+}
+
+// Promotion APIs
+export async function getPromotions(search = '') {
+  return apiRequest(`/promotions?search=${encodeURIComponent(search)}`);
+}
+
+export async function createPromotion(data) {
+  return apiRequest('/promotions', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updatePromotion(id, data) {
+  return apiRequest(`/promotions/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deletePromotion(id) {
+  return apiRequest(`/promotions/${id}`, { method: 'DELETE' });
+}
+
+// Promotion-Vehicle Link APIs
+export async function getPromotionVehicles() {
+  return apiRequest('/promotion-vehicles');
+}
+
+export async function createPromotionVehicle(data) {
+  return apiRequest('/promotion-vehicles', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function deletePromotionVehicle(promotionId, vehicleId) {
+  return apiRequest(`/promotion-vehicles/${promotionId}/${vehicleId}`, { method: 'DELETE' });
+}
+
+// Report API
+export async function getCustomerPromotionReport() {
+  return apiRequest('/customer-promotion-report');
+}
+
+// Dashboard API
+export async function getDashboardSummary() {
+  return apiRequest('/dashboard');
+}
